@@ -1,0 +1,24 @@
+name: CI Python Matrix
+# Triggers 
+on:
+  push:
+    branches: [main] # on push to main branch
+  pull_request:
+    branches: [main] # on pull request to main branch
+
+jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+    strategy:  # runs the job in parallel for each Python version
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v4  # action to clone the repository
+
+    - uses: actions/setup-python@v4 # set up python  
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - run: pip install -r requirements.txt # install requirements
+    - run: pytest tests/ -v # run tests

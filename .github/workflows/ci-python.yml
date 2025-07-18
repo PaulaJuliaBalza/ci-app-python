@@ -1,0 +1,38 @@
+name: CI Básico Python
+# triggers
+on:
+  push:
+    branches: [main, develop] # on push to main or develop branches
+  pull_request:
+    branches: [main] # on pull request to main branch
+
+jobs:
+  test: # One job for testing
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout                 # First step 
+      uses: actions/checkout@v4      # Action to clone the repository
+
+    - name: Configurar Python        # Second step
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'       # Install Python 3.11 with an action
+
+    - name: Instalar dependencias    # Third step: install requirements
+      run: |
+        pip install -r requirements.txt  
+
+    - name: Ejecutar tests           # Fourth step: run tests
+      run: |
+        pytest tests/ -v
+
+    - name: Ejecutar con cobertura   # Fifth step: run tests with coverage
+      run: |
+        pytest --cov=app --cov-report=term --cov-report=html
+
+    - name: Guardar reporte          # Sixth step: save coverage report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: htmlcov/
